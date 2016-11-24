@@ -46,6 +46,11 @@ class Provision_Service_http_nginx_ssl extends Provision_Service_http_ssl {
     $this->server->setProperty('provision_db_cloaking', TRUE);
     $this->server->setProperty('phpfpm_mode', 'port');
     $this->server->setProperty('satellite_mode', 'vanilla');
+
+    // Reverse proxy config
+    $this->server->setProperty('http_proxy_type', self::HOSTING_SERVER_PROXY_NONE);
+    $this->server->setProperty('http_ssl_proxy_type', self::HOSTING_SERVER_PROXY_NONE);
+    $this->server->setProperty('http_real_ip_from', '');
   }
 
   function save_server() {

@@ -47,6 +47,7 @@ class Provision_Service_http_ssl extends Provision_Service_http_public {
   function config_data($config = NULL, $class = NULL) {
     $data = parent::config_data($config, $class);
     $data['http_ssl_port'] = $this->server->http_ssl_port;
+    $data['http_ssl_proxy_type'] = $this->server->http_ssl_proxy_type;
 
     if ($config == 'server') {
       // Generate a certificate for the default SSL vhost, and retrieve the

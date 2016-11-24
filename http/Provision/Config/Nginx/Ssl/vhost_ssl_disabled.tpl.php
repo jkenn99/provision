@@ -12,11 +12,9 @@ if (!$nginx_has_http2 && $server->nginx_has_http2) {
   $nginx_has_http2 = $server->nginx_has_http2;
 }
 
+$ssl_args = "ssl";
 if ($nginx_has_http2) {
-  $ssl_args = "ssl http2";
-}
-else {
-  $ssl_args = "ssl";
+  $ssl_args .= " http2";
 }
 
 if ($satellite_mode == 'boa') {
@@ -38,6 +36,11 @@ server {
   return 302 <?php print $this->platform->server->web_disable_url . '/' . $this->uri ?>;
 <?php endif; ?>
   ssl                        on;
+<?php if ($server->http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+  real_ip_header             X-Forwarded-For;
+<?php elseif ($server->http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+  real_ip_header             proxy_protocol;
+<?php endif; ?>
 <?php if ($satellite_mode == 'boa'): ?>
   ssl_stapling               on;
   ssl_stapling_verify        on;

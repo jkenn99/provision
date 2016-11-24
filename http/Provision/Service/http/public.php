@@ -2,6 +2,21 @@
 
 // Public http service , as in non-encrypted and listening on a port.
 class Provision_Service_http_public extends Provision_Service_http {
+  /**
+   * This server is not behind a proxy
+   */
+  const HOSTING_SERVER_PROXY_NONE = 0;
+
+  /**
+   * This server is behind a proxy using the X-Forwarded-For header
+   */
+  const HOSTING_SERVER_PROXY_XFORWARDEDFOR = 1;
+
+  /**
+   * This server is behind a proxy using the PROXY protocol
+   */
+  const HOSTING_SERVER_PROXY_PROXYPROTOCOL = 2;
+
   protected $has_port = TRUE;
    
   function default_port() {
@@ -19,6 +34,8 @@ class Provision_Service_http_public extends Provision_Service_http {
     }
 
     $data['http_port'] = $this->server->http_port;
+    $data['http_proxy_type'] = $this->server->http_proxy_type;
+    $data['http_real_ip_from'] = $this->server->http_real_ip_from;
 
     // TODO: move away from drush_get_context entirely.
     if ($config == 'site') {

@@ -32,6 +32,11 @@ class Provision_Service_http_nginx extends Provision_Service_http_public {
     $this->server->setProperty('phpfpm_mode', 'port');
     $this->server->setProperty('subdirs_support', FALSE);
     $this->server->setProperty('satellite_mode', 'vanilla');
+
+    // Reverse proxy config
+    $this->server->setProperty('http_proxy_type', self::HOSTING_SERVER_PROXY_NONE);
+    $this->server->setProperty('http_real_ip_from', '');
+
     if (provision_hosting_feature_enabled('subdirs')) {
       $this->server->subdirs_support = TRUE;
       $this->configs['site'][] = 'Provision_Config_Nginx_Subdir';

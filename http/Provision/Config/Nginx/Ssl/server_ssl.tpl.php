@@ -15,11 +15,12 @@ if (!$nginx_has_http2 && $server->nginx_has_http2) {
   $nginx_has_http2 = $server->nginx_has_http2;
 }
 
+$ssl_args = "ssl";
 if ($nginx_has_http2) {
-  $ssl_args = "ssl http2";
+  $ssl_args .= " http2";
 }
-else {
-  $ssl_args = "ssl";
+if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL) {
+  $ssl_args .= " proxy_protocol";
 }
 
 if ($satellite_mode == 'boa') {
@@ -34,6 +35,11 @@ server {
 <?php foreach ($server->ip_addresses as $ip) :?>
   listen       <?php print "{$ip}:{$http_ssl_port} {$ssl_args}"; ?>;
 <?php endforeach; ?>
+<?php endif; ?>
+<?php if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+  real_ip_header X-Forwarded-For;
+<?php elseif ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+  real_ip_header proxy_protocol;
 <?php endif; ?>
   server_name  _;
   location / {

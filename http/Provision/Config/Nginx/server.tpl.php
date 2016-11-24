@@ -292,12 +292,25 @@ map $args $is_denied {
 }
 <?php endif; ?>
 
+<?php if ($http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+real_ip_header X-Forwarded-For;
+<?php elseif ($http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+real_ip_header proxy_protocol;
+<?php endif; ?>
+<?php if ($http_real_ip_from != ''): ?>
+set_real_ip_from <?php print $http_real_ip_from; ?>;
+<?php endif; ?>
+
 #######################################################
 ###  nginx default server
 #######################################################
 
 server {
-  listen       *:<?php print $http_port; ?>;
+<?php if ($http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+  listen *:<?php print $http_port; ?> proxy_protocol;
+<?php else: ?>
+  listen *:<?php print $http_port; ?>;
+<?php endif; ?>
   server_name  _;
   location / {
 <?php if ($satellite_mode == 'boa'): ?>

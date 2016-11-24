@@ -14,11 +14,9 @@ if (!$nginx_has_http2 && $server->nginx_has_http2) {
 
 $aegir_root = d('@server_master')->aegir_root;
 
+$ssl_args = "ssl";
 if ($nginx_has_http2) {
-  $ssl_args = "ssl http2";
-}
-else {
-  $ssl_args = "ssl";
+  $ssl_args .= " http2";
 }
 
 if ($satellite_mode == 'boa') {
@@ -47,6 +45,11 @@ server {
   }
 ?>
   ssl                        on;
+<?php if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+  real_ip_header             X-Forwarded-For;
+<?php elseif ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+  real_ip_header             proxy_protocol;
+<?php endif; ?>
 <?php if ($satellite_mode == 'boa'): ?>
   ssl_stapling               on;
   ssl_stapling_verify        on;
@@ -133,6 +136,11 @@ server {
     } ?>;
   root          <?php print "{$this->root}"; ?>;
   ssl                        on;
+<?php if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+  real_ip_header             X-Forwarded-For;
+<?php elseif ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+  real_ip_header             proxy_protocol;
+<?php endif; ?>
 <?php if ($satellite_mode == 'boa'): ?>
   ssl_stapling               on;
   ssl_stapling_verify        on;
