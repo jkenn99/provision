@@ -15,6 +15,11 @@ if (!$nginx_has_http2 && $server->nginx_has_http2) {
   $nginx_has_http2 = $server->nginx_has_http2;
 }
 
+$nginx_has_realip = drush_get_option('nginx_has_realip');
+if (!$nginx_has_realip && $server->nginx_has_realip) {
+  $nginx_has_realip = $server->nginx_has_realip;
+}
+
 $ssl_args = "ssl";
 if ($nginx_has_http2) {
   $ssl_args .= " http2";
@@ -36,9 +41,9 @@ server {
   listen       <?php print "{$ip}:{$http_ssl_port} {$ssl_args}"; ?>;
 <?php endforeach; ?>
 <?php endif; ?>
-<?php if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+<?php if ($nginx_has_realip && $http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
   real_ip_header X-Forwarded-For;
-<?php elseif ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+<?php elseif ($nginx_has_realip && $http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
   real_ip_header proxy_protocol;
 <?php endif; ?>
   server_name  _;

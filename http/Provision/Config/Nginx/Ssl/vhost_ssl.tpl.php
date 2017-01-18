@@ -12,6 +12,11 @@ if (!$nginx_has_http2 && $server->nginx_has_http2) {
   $nginx_has_http2 = $server->nginx_has_http2;
 }
 
+$nginx_has_realip = drush_get_option('nginx_has_realip');
+if (!$nginx_has_realip && $server->nginx_has_realip) {
+  $nginx_has_realip = $server->nginx_has_realip;
+}
+
 $aegir_root = d('@server_master')->aegir_root;
 
 $ssl_args = "ssl";
@@ -45,9 +50,9 @@ server {
   }
 ?>
   ssl                        on;
-<?php if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+<?php if ($nginx_has_realip && $http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
   real_ip_header             X-Forwarded-For;
-<?php elseif ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+<?php elseif ($nginx_has_realip && $http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
   real_ip_header             proxy_protocol;
 <?php endif; ?>
 <?php if ($satellite_mode == 'boa'): ?>
@@ -136,9 +141,9 @@ server {
     } ?>;
   root          <?php print "{$this->root}"; ?>;
   ssl                        on;
-<?php if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+<?php if ($nginx_has_realip && $http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
   real_ip_header             X-Forwarded-For;
-<?php elseif ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+<?php elseif ($nginx_has_realip && $http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
   real_ip_header             proxy_protocol;
 <?php endif; ?>
 <?php if ($satellite_mode == 'boa'): ?>

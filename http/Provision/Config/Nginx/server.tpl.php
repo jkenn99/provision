@@ -35,14 +35,19 @@ if (!$nginx_has_etag && $server->nginx_has_etag) {
   $nginx_has_etag = $server->nginx_has_etag;
 }
 
+$nginx_has_gzip = drush_get_option('nginx_has_gzip');
+if (!$nginx_has_gzip && $server->nginx_has_gzip) {
+  $nginx_has_gzip = $server->nginx_has_gzip;
+}
+
 $nginx_has_http2 = drush_get_option('nginx_has_http2');
 if (!$nginx_has_http2 && $server->nginx_has_http2) {
   $nginx_has_http2 = $server->nginx_has_http2;
 }
 
-$nginx_has_gzip = drush_get_option('nginx_has_gzip');
-if (!$nginx_has_gzip && $server->nginx_has_gzip) {
-  $nginx_has_gzip = $server->nginx_has_gzip;
+$nginx_has_realip = drush_get_option('nginx_has_realip');
+if (!$nginx_has_realip && $server->nginx_has_realip) {
+  $nginx_has_realip = $server->nginx_has_realip;
 }
 
 $nginx_has_upload_progress = drush_get_option('nginx_has_upload_progress');
@@ -292,12 +297,12 @@ map $args $is_denied {
 }
 <?php endif; ?>
 
-<?php if ($http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
+<?php if ($nginx_has_realip && $http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_XFORWARDEDFOR): ?>
 real_ip_header X-Forwarded-For;
-<?php elseif ($http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
+<?php elseif ($nginx_has_realip && $http_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_PROXYPROTOCOL): ?>
 real_ip_header proxy_protocol;
 <?php endif; ?>
-<?php if ($http_real_ip_from != ''): ?>
+<?php if ($nginx_has_realip && $http_real_ip_from != ''): ?>
 set_real_ip_from <?php print $http_real_ip_from; ?>;
 <?php endif; ?>
 
