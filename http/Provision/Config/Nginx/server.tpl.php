@@ -326,6 +326,9 @@ server {
     add_header X-XSS-Protection "1; mode=block";
     root   /var/www/nginx-default;
     index  index.html index.htm;
+<?php elseif ($http_proxy_type > Provision_Service_http_public::HOSTING_SERVER_PROXY_NONE): ?>
+    return 204;
+    access_log off;
 <?php else: ?>
     return 404;
 <?php endif; ?>
