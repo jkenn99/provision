@@ -28,13 +28,13 @@ if ($http_ssl_proxy_type == Provision_Service_http_public::HOSTING_SERVER_PROXY_
   $ssl_args .= " proxy_protocol";
 }
 
-if ($satellite_mode == 'boa') {
+if ($satellite_mode == 'boa' || $http_proxy_type > Provision_Service_http_public::HOSTING_SERVER_PROXY_NONE) {
   $ssl_listen_ip = "*";
 }
 ?>
 
 server {
-<?php if ($satellite_mode == 'boa'): ?>
+<?php if ($satellite_mode == 'boa' || $http_proxy_type > Provision_Service_http_public::HOSTING_SERVER_PROXY_NONE): ?>
   listen       <?php print "{$ssl_listen_ip}:{$http_ssl_port} {$ssl_args}"; ?>;
 <?php else: ?>
 <?php foreach ($server->ip_addresses as $ip) :?>
